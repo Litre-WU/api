@@ -1,0 +1,104 @@
+[2020-01-25 15:14:43 +0800] [17072] [INFO] Starting gunicorn 19.9.0
+[2020-01-25 15:14:43 +0800] [17072] [INFO] Listening at: http://0.0.0.0:5252 (17072)
+[2020-01-25 15:14:43 +0800] [17072] [INFO] Using worker: geventwebsocket.gunicorn.workers.GeventWebSocketWorker
+[2020-01-25 15:14:43 +0800] [17075] [INFO] Booting worker with pid: 17075
+[2020-01-25 15:14:43 +0800] [17075] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/arbiter.py", line 583, in spawn_worker
+    worker.init_process()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/ggevent.py", line 203, in init_process
+    super(GeventWorker, self).init_process()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/base.py", line 129, in init_process
+    self.load_wsgi()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/base.py", line 138, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/wsgiapp.py", line 52, in load
+    return self.load_wsgiapp()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/wsgiapp.py", line 41, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/util.py", line 350, in import_app
+    __import__(module)
+ModuleNotFoundError: No module named 'api'
+[2020-01-25 15:14:43 +0800] [17075] [INFO] Worker exiting (pid: 17075)
+[2020-01-25 15:14:43 +0800] [17072] [INFO] Shutting down: Master
+[2020-01-25 15:14:43 +0800] [17072] [INFO] Reason: Worker failed to boot.
+[2020-01-25 15:14:44 +0800] [17084] [INFO] Starting gunicorn 19.9.0
+[2020-01-25 15:14:44 +0800] [17084] [INFO] Listening at: http://0.0.0.0:5252 (17084)
+[2020-01-25 15:14:44 +0800] [17084] [INFO] Using worker: geventwebsocket.gunicorn.workers.GeventWebSocketWorker
+[2020-01-25 15:14:44 +0800] [17091] [INFO] Booting worker with pid: 17091
+[2020-01-25 15:14:44 +0800] [17091] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/arbiter.py", line 583, in spawn_worker
+    worker.init_process()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/ggevent.py", line 203, in init_process
+    super(GeventWorker, self).init_process()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/base.py", line 129, in init_process
+    self.load_wsgi()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/base.py", line 138, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/wsgiapp.py", line 52, in load
+    return self.load_wsgiapp()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/wsgiapp.py", line 41, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/util.py", line 350, in import_app
+    __import__(module)
+ModuleNotFoundError: No module named 'api'
+[2020-01-25 15:14:44 +0800] [17091] [INFO] Worker exiting (pid: 17091)
+[2020-01-25 15:14:44 +0800] [17084] [INFO] Shutting down: Master
+[2020-01-25 15:14:44 +0800] [17084] [INFO] Reason: Worker failed to boot.
+[2020-02-19 13:32:04 +0800] [21781] [INFO] Starting gunicorn 19.9.0
+[2020-02-19 13:32:04 +0800] [21781] [INFO] Listening at: http://0.0.0.0:5252 (21781)
+[2020-02-19 13:32:04 +0800] [21781] [INFO] Using worker: geventwebsocket.gunicorn.workers.GeventWebSocketWorker
+[2020-02-19 13:32:04 +0800] [21784] [INFO] Booting worker with pid: 21784
+[2020-02-19 13:32:04 +0800] [21784] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/arbiter.py", line 583, in spawn_worker
+    worker.init_process()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/ggevent.py", line 203, in init_process
+    super(GeventWorker, self).init_process()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/base.py", line 129, in init_process
+    self.load_wsgi()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/base.py", line 138, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/wsgiapp.py", line 52, in load
+    return self.load_wsgiapp()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/wsgiapp.py", line 41, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/util.py", line 350, in import_app
+    __import__(module)
+ModuleNotFoundError: No module named 'api'
+[2020-02-19 13:32:04 +0800] [21784] [INFO] Worker exiting (pid: 21784)
+[2020-02-19 13:32:04 +0800] [21781] [INFO] Shutting down: Master
+[2020-02-19 13:32:04 +0800] [21781] [INFO] Reason: Worker failed to boot.
+[2020-02-19 13:32:05 +0800] [21801] [INFO] Starting gunicorn 19.9.0
+[2020-02-19 13:32:05 +0800] [21801] [INFO] Listening at: http://0.0.0.0:5252 (21801)
+[2020-02-19 13:32:05 +0800] [21801] [INFO] Using worker: geventwebsocket.gunicorn.workers.GeventWebSocketWorker
+[2020-02-19 13:32:05 +0800] [21808] [INFO] Booting worker with pid: 21808
+[2020-02-19 13:32:06 +0800] [21808] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/arbiter.py", line 583, in spawn_worker
+    worker.init_process()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/ggevent.py", line 203, in init_process
+    super(GeventWorker, self).init_process()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/base.py", line 129, in init_process
+    self.load_wsgi()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/workers/base.py", line 138, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/wsgiapp.py", line 52, in load
+    return self.load_wsgiapp()
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/app/wsgiapp.py", line 41, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/www/wwwroot/api/api_venv/lib/python3.7/site-packages/gunicorn/util.py", line 350, in import_app
+    __import__(module)
+ModuleNotFoundError: No module named 'api'
+[2020-02-19 13:32:06 +0800] [21808] [INFO] Worker exiting (pid: 21808)
+[2020-02-19 13:32:06 +0800] [21801] [INFO] Shutting down: Master
+[2020-02-19 13:32:06 +0800] [21801] [INFO] Reason: Worker failed to boot.
