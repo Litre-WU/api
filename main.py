@@ -23,7 +23,18 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_DIR = os.path.join(BASE_DIR, 'logs')
 
 
-app = FastAPI()
+tags_metadata = [
+    {
+        "name": "开放接口",
+        "description": "这里包含了一些app和站点的资源，如果你想部署到你的服务器上可以使用 docker run --name api-test -d -p 80:5252 litrewu/api 进行部署运行",
+        "externalDocs": {
+            "description": "More",
+            "url": "http://110.43.42.178",
+        },
+    },
+]
+
+app = FastAPI(openapi_url="/api/v1/openapi.json", openapi_tags=tags_metadata)
 
 origins = [
     "http://localhost",
@@ -60,7 +71,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 
 def request_log(name, content):
-    print(name, content)
     if not os.path.exists(LOG_DIR):
         os.mkdir(LOG_DIR)
     with open(f"{LOG_DIR}/{name}.txt", 'a') as f:
@@ -81,6 +91,7 @@ async def index(request: Request, background_tasks: BackgroundTasks, x_token: Li
         # "token": token,
         "result": "你看这个面它又长又宽，就像这个碗它又大又圆",
         "info": {
+            "openapi_url": "/api/v1/openapi.json",
             "ip": request.client.host,
             "X-Token": x_token,
             "UA": user_agent,
@@ -108,7 +119,6 @@ async def hot_search(request: Request, x_token: List[str] = Header(None), user_a
             "headers": request.headers.items()
         }
     }
-
     info = dict()
     try:
         result["result"] = await rs(info)
