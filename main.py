@@ -1,6 +1,7 @@
-from typing import Optional
-from fastapi import FastAPI, Header, Cookie
-from typing import List
+from typing import Optional, List
+from fastapi import FastAPI, Header, Cookie, Depends, BackgroundTasks
+from fastapi.security import OAuth2PasswordBearer
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from starlette.requests import Request
 from spider.amuse.sina import *
@@ -16,33 +17,68 @@ from tools.sf2o import trs
 from spider.car.jzjf import JZJF
 from spider.car.xcd import XCD
 from spider.car.wzcx import Q
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+
 
 app = FastAPI()
 
+origins = [
+    "http://localhost",
+    "http://localhost:52",
+]
 
-# 测试
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# class Item(BaseModel):
-#     name: str
-#     number: str
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# @app.get("/item/{item_id}")
-# async def read_item(item_id: int, q: str = None):
-#     return {"item_id": item_id, "q": q}
-#
-#
-# @app.put("/items/{item_id}")
-# async def update_item(item_id: int, item: Item):
-#     return {"item_name": item.name, "item_id": item_id}
+
+class User(BaseModel):
+    username: str
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    disabled: Optional[bool] = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = fake_decode_token(token)
+    return user
+
+
+def request_log(name, content):
+    print(name, content)
+    if not os.path.exists(LOG_DIR):
+        os.mkdir(LOG_DIR)
+    with open(f"{LOG_DIR}/{name}.txt", 'a') as f:
+        f.writelines(content)
+        f.write('\n')
+        f.close()
 
 
 # 首页
 @app.get("/")
 @app.post("/")
-async def index(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None)):
+async def index(request: Request, background_tasks: BackgroundTasks, x_token: List[str] = Header(None),
+                user_agent: Optional[str] = Header(None)):
     result = {
         "code": 200,
         "msg": "来了！老弟",
+        # "current_user": current_user,
+        # "token": token,
         "result": "你看这个面它又长又宽，就像这个碗它又大又圆",
         "info": {
             "ip": request.client.host,
@@ -51,6 +87,7 @@ async def index(request: Request, x_token: List[str] = Header(None), user_agent:
             "headers": request.headers.items()
         }
     }
+    background_tasks.add_task(request_log, 'LOG', f'{request.client.host} {request.base_url}')
     return result
 
 
@@ -174,8 +211,9 @@ class Douban(BaseModel):
     count: str = None
 
 
-@app.post("/douban/hot/")
-async def douban(data: Douban, request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None)):
+@app.post("/douban/hot/", response_model=Douban)
+async def douban(data: Douban, request: Request, x_token: List[str] = Header(None),
+                 user_agent: Optional[str] = Header(None)):
     info = data.dict()
     result = {
         "code": 200,
@@ -231,7 +269,7 @@ class Douban_Movie(BaseModel):
     limit: str = None
 
 
-@app.post("/douban/movie/hot/")
+@app.post("/douban/movie/hot/", response_model=Douban_Movie)
 async def douban_movie(data: Douban_Movie, request: Request, x_token: List[str] = Header(None),
                        user_agent: Optional[str] = Header(None)):
     info = data.dict()
@@ -291,7 +329,7 @@ class Video(BaseModel):
     keyword: str = "绀青之拳"
 
 
-@app.post('/video/search/')
+@app.post('/video/search/', response_model=Video)
 async def video_search(data: Video, request: Request, x_token: List[str] = Header(None),
                        user_agent: Optional[str] = Header(None)):
     info = data.dict()
@@ -320,13 +358,10 @@ async def video_search(data: Video, request: Request, x_token: List[str] = Heade
 
 
 # 抖音
-class Douyin(BaseModel):
-    type: str = "hot"
-    count: str = "10"
-
 
 @app.get("/douyin/")
-async def dy(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None), type: Optional[str] = "hot",
+async def dy(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None),
+             type: Optional[str] = "hot",
              count: Optional[str] = "10"):
     info = {"type": type, "count": count}
     result = {
@@ -351,8 +386,14 @@ async def dy(request: Request, x_token: List[str] = Header(None), user_agent: Op
     return result
 
 
-@app.post("/douyin/")
-async def dy(data: Douyin, request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None)):
+class Douyin(BaseModel):
+    type: str = "hot"
+    count: str = "10"
+
+
+@app.post("/douyin/", response_model=Douyin)
+async def dy(data: Douyin, request: Request, x_token: List[str] = Header(None),
+             user_agent: Optional[str] = Header(None)):
     info = data.dict()
     result = {
         "code": 200,
@@ -379,7 +420,8 @@ async def dy(data: Douyin, request: Request, x_token: List[str] = Header(None), 
 # QQ音乐
 
 @app.get("/qqmusic/")
-async def music(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None), topid: Optional[str] = "4",
+async def music(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None),
+                topid: Optional[str] = "4",
                 count: Optional[str] = "100"):
     info = {"topid": topid, "count": count}
     result = {
@@ -409,8 +451,9 @@ class QQMusic(BaseModel):
     count: str = None
 
 
-@app.post("/qqmusic/")
-async def music(data: QQMusic, request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None)):
+@app.post("/qqmusic/", response_model=QQMusic)
+async def music(data: QQMusic, request: Request, x_token: List[str] = Header(None),
+                user_agent: Optional[str] = Header(None)):
     info = data.dict()
     result = {
         "code": 200,
@@ -495,7 +538,8 @@ async def phone(request: Request, x_token: List[str] = Header(None), user_agent:
 # 短信内容
 
 @app.get("/sms/msg/")
-async def smsg(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None), phone: Optional[str] = None):
+async def smsg(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None),
+               phone: Optional[str] = None):
     info = {"phone": phone}
     print(info)
     result = {
@@ -524,8 +568,9 @@ class Msg(BaseModel):
     phone: str = None
 
 
-@app.post("/sms/msg/")
-async def smsg(data: Msg, request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None)):
+@app.post("/sms/msg/", response_model=Msg)
+async def smsg(data: Msg, request: Request, x_token: List[str] = Header(None),
+               user_agent: Optional[str] = Header(None)):
     info = data.dict()
     result = {
         "code": 200,
@@ -605,8 +650,9 @@ async def cwz(request: Request, x_token: List[str] = Header(None), user_agent: O
     return result
 
 
-@app.post("/api")
-async def cwz(data: ApiData, request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None)):
+@app.post("/api", response_model=ApiData)
+async def cwz(data: ApiData, request: Request, x_token: List[str] = Header(None),
+              user_agent: Optional[str] = Header(None)):
     info = data.dict()
     result = {
         "code": 200,
@@ -632,7 +678,8 @@ async def cwz(data: ApiData, request: Request, x_token: List[str] = Header(None)
 
 
 @app.get("/jzjf")
-async def jzjf(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None), driver: Optional[str] = None,
+async def jzjf(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None),
+               driver: Optional[str] = None,
                doc: Optional[str] = None):
     info = {"driver": driver, "doc": doc}
     result = {
@@ -655,8 +702,9 @@ async def jzjf(request: Request, x_token: List[str] = Header(None), user_agent: 
     return result
 
 
-@app.post("/jzjf")
-async def jsjf(data: JzData, request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None)):
+@app.post("/jzjf", response_model=JzData)
+async def jsjf(data: JzData, request: Request, x_token: List[str] = Header(None),
+               user_agent: Optional[str] = Header(None)):
     info = data.dict()
     result = {
         "code": 200,
@@ -679,7 +727,8 @@ async def jsjf(data: JzData, request: Request, x_token: List[str] = Header(None)
 
 
 @app.get("/xcd")
-async def xcd(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None), jdsbh: Optional[str] = None):
+async def xcd(request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None),
+              jdsbh: Optional[str] = None):
     info = {"jdsbh": jdsbh}
     result = {
         "code": 200,
@@ -702,8 +751,9 @@ async def xcd(request: Request, x_token: List[str] = Header(None), user_agent: O
     return result
 
 
-@app.post("/xcd")
-async def xcd(data: XcdData, request: Request, x_token: List[str] = Header(None), user_agent: Optional[str] = Header(None)):
+@app.post("/xcd", response_model=XcdData)
+async def xcd(data: XcdData, request: Request, x_token: List[str] = Header(None),
+              user_agent: Optional[str] = Header(None)):
     info = data.dict()
     result = {
         "code": 200,
@@ -724,4 +774,7 @@ async def xcd(data: XcdData, request: Request, x_token: List[str] = Header(None)
         result["result"] = {"msg": "暂无法查询！"}
     return result
 
+if __name__ == '__main__':
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+    print(BASE_DIR)
