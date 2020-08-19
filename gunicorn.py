@@ -19,13 +19,13 @@ timeout = 15  # 超时
 # worker_class = 'gevent' # 默认的是sync模式
 worker_class = 'uvicorn.workers.UvicornWorker'  # 使用uvicorn模式
 
-workers = multiprocessing.cpu_count() * 2 + 1  # 进程数
+# workers = multiprocessing.cpu_count() * 2 + 1  # 进程数
 
-# workers = 4  # 进程数
+workers = 4  # 进程数
 
 threads = 4  # 指定每个进程开启的线程数
 
-# daemon = True  # 守护进程
+daemon = True  # 守护进程
 
 reload = True  # 自动加载
 

@@ -1,5 +1,5 @@
 import requests
-from spider.tools.headers import async_ua
+from spider.tools.headers import async_ua, ua
 from lxml import etree
 from concurrent.futures.thread import ThreadPoolExecutor
 
@@ -19,7 +19,7 @@ class Movie:
             "submit": "search"
         }
         try:
-            with requests.post(url=url, params=params, data=data, headers=await async_ua(), timeout=2) as rs:
+            with requests.post(url=url, params=params, data=data, headers=ua(), timeout=2) as rs:
                 # print(rs.text)
                 html = etree.HTML(rs.text)
                 hrefs = html.xpath('//span[@class="xing_vb4"]/a/@href')
@@ -27,7 +27,7 @@ class Movie:
             if hrefs:
                 with ThreadPoolExecutor(len(hrefs)) as exector:
                     exector.map(self.parse_data,
-                                [{"headers": headers, "url": url, "href": hrefs[x]} for x in range(len(hrefs))])
+                                [{"headers": ua(), "url": url, "href": hrefs[x]} for x in range(len(hrefs))])
                     # for x in range(len(hrefs)):
                     #     exector.submit(self.parse_data({"headers": headers, "url": url, "href": href[x]}))
             return self.data
@@ -38,7 +38,7 @@ class Movie:
         if meta["href"]:
             url = meta["url"] + meta["href"]
             try:
-                with requests.get(url, headers=meta["headers"], timeout=2) as rs:
+                with requests.get(url, headers=ua(), timeout=2) as rs:
                     html = etree.HTML(rs.text)
                     play = html.xpath('//div[@class="vodplayinfo"]/div/ul/li/text()')
                     if not play:
@@ -107,9 +107,8 @@ async def search_movie(info):
             "wd": keyword,
             "submit": "search"
         }
-        headers = ua()
         try:
-            with requests.post(url=url, params=params, data=data, headers=ua()) as rs:
+            with requests.post(url=url, params=params, data=data, headers=await async_ua()) as rs:
                 html = etree.HTML(rs.text)
                 names = html.xpath('//span[@class="xing_vb4"]/a/text()')
                 links = html.xpath('//span[@class="xing_vb4"]/a/@href')
@@ -121,7 +120,7 @@ async def search_movie(info):
                 }
                 for index, l in enumerate(links):
                     url = source_url + l
-                    with requests.get(url=url, headers=headers) as rs:
+                    with requests.get(url=url, headers=await async_ua()) as rs:
                         # print(rs.text)
                         html = etree.HTML(rs.text)
                         pnames = html.xpath('//div/div/ul/li/a/text()')
