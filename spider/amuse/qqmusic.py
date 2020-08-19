@@ -1,5 +1,5 @@
 import requests
-from spider.tools.headers import ua
+from spider.tools.headers import async_ua
 
 
 async def qqmusic(info):
@@ -16,8 +16,7 @@ async def qqmusic(info):
         "song_num": count,
     }
     try:
-        header = ua()
-        with requests.get(url=url, params=params, headers=header) as rs:
+        with requests.get(url=url, params=params, headers=await async_ua()) as rs:
             result = rs.json()
     except Exception as e:
         print(e)

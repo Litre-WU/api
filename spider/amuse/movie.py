@@ -1,5 +1,5 @@
 import requests
-from spider.tools.headers import ua
+from spider.tools.headers import async_ua
 from lxml import etree
 from concurrent.futures.thread import ThreadPoolExecutor
 
@@ -18,9 +18,8 @@ class Movie:
             "wd": self.info.get("keyword", ""),
             "submit": "search"
         }
-        headers = ua()
         try:
-            with requests.post(url=url, params=params, data=data, headers=headers, timeout=2) as rs:
+            with requests.post(url=url, params=params, data=data, headers=await async_ua(), timeout=2) as rs:
                 # print(rs.text)
                 html = etree.HTML(rs.text)
                 hrefs = html.xpath('//span[@class="xing_vb4"]/a/@href')

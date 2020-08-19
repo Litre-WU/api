@@ -1,5 +1,5 @@
 import requests
-from spider.tools.headers import ua
+from spider.tools.headers import async_ua
 from random import randint
 import time
 
@@ -18,10 +18,9 @@ async def adage_(info):
         "resource_id": "6844",
         "_": str(int(time.time() * 1000)),
     }
-    headers = ua()
 
     try:
-        with requests.get(url=url, params=params, headers=headers) as rs:
+        with requests.get(url=url, params=params, headers=await async_ua()) as rs:
             data_list = []
             for a in rs.json()["data"][0]["disp_data"]:
                 data = {

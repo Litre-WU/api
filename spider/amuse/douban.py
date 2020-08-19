@@ -1,5 +1,5 @@
 import requests
-from spider.tools.headers import ua
+from spider.tools.headers import async_ua
 
 
 async def db_hot(info):
@@ -19,7 +19,7 @@ async def db_hot(info):
     }
 
     try:
-        with requests.get(url=url, params=params, headers=ua()) as rs:
+        with requests.get(url=url, params=params, headers=await async_ua()) as rs:
             result = rs.json()
     except Exception as e:
         print(e)

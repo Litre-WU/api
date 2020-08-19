@@ -1,6 +1,6 @@
 import requests
 import json
-from spider.tools.headers import ua
+from spider.tools.headers import async_ua
 
 
 async def sms(info):
@@ -9,8 +9,7 @@ async def sms(info):
     }
     url = 'http://www.xnsms.com/test/getPhones'
 
-    headers = ua()
-    with requests.post(url=url, headers=headers) as rs:
+    with requests.post(url=url, headers=await async_ua()) as rs:
         result["result"] = rs.json()
     return result
 

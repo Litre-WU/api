@@ -1,5 +1,5 @@
 import requests
-from spider.tools.headers import ua
+from spider.tools.headers import async_ua
 
 
 async def douyin(info):
@@ -17,8 +17,7 @@ async def douyin(info):
     if info["type"] == "energy":
         url = 'https://aweme.snssdk.com/aweme/v1/hotsearch/positive_energy/billboard/'
     try:
-        header = ua()
-        with requests.get(url=url, headers=header) as rs:
+        with requests.get(url=url, headers=await async_ua()) as rs:
             result = rs.json()
     except Exception as e:
         print(e)
