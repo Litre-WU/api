@@ -14,6 +14,6 @@
  
  # CMD ["python", "run.py"]
  
- # CMD ["python","-m","uvicorn","main:app","--host","0.0.0.0","--port","5252","--workers","4"]
+ # CMD ["uvicorn","main:app","--host","0.0.0.0","--port","5252","--workers","4"]
  
  CMD ["gunicorn", "main:app", "-c", "gunicorn.py"]
