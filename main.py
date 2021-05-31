@@ -18,6 +18,8 @@ from spider.car.jzjf import JZJF
 from spider.car.xcd import XCD
 from spider.car.wzcx import Q
 import os
+import uuid
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_DIR = os.path.join(BASE_DIR, 'logs')
@@ -58,6 +60,10 @@ class User(BaseModel):
     full_name: Optional[str] = None
     disabled: Optional[bool] = None
 
+# 生成token
+async def token():
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, "".join(str(uuid.uuid1()).split("-"))))
+
 
 def fake_decode_token(token):
     return User(
@@ -94,8 +100,8 @@ async def index(request: Request, background_tasks: BackgroundTasks, x_token: Li
             "openapi_url": "/api/v1/openapi.json",
             "ip": request.client.host,
             "X-Token": x_token,
-            "UA": user_agent,
-            "headers": request.headers.items()
+            "user-agent": user_agent,
+            "headers": dict(request.headers)
         }
     }
     background_tasks.add_task(request_log, 'LOG', f'{request.client.host} {request.base_url}')
