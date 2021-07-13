@@ -76,13 +76,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     return user
 
 
-def request_log(name, content):
-    if not os.path.exists(LOG_DIR):
-        os.mkdir(LOG_DIR)
-    with open(f"{LOG_DIR}/{name}.txt", 'a') as f:
+async def request_log(name, content):
+    if not os.path.exists(LOG_DIR): os.mkdir(LOG_DIR)
+    with open(f"{LOG_DIR}/{name}", 'a') as f:
         f.writelines(content)
         f.write('\n')
-        f.close()
 
 
 # 首页
